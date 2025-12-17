@@ -1,0 +1,87 @@
+/* High-end, clean VitePress look: subtle gradient, refined typography, sharper cards. */
+
+:root {
+  /* Brand */
+  --vp-c-brand-1: #3b82f6;
+  --vp-c-brand-2: #2563eb;
+  --vp-c-brand-3: #1d4ed8;
+
+  /* Fonts */
+  --vp-font-family-base: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  --vp-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Layout */
+  --vp-layout-max-width: 1200px;
+}
+
+/* Page background */
+.VPApp {
+  background:
+    radial-gradient(1000px 600px at 10% 0%, rgba(59, 130, 246, 0.10), transparent 55%),
+    radial-gradient(900px 550px at 90% 10%, rgba(16, 185, 129, 0.10), transparent 50%),
+    linear-gradient(to bottom, rgba(2, 6, 23, 0.02), transparent 240px);
+}
+
+/* Home hero refinement */
+.VPHero .name,
+.VPHero .text {
+  letter-spacing: -0.02em;
+}
+
+.VPHero .image-bg {
+  filter: blur(24px);
+  opacity: 0.55;
+}
+
+/* Card polish (features) */
+.VPFeature {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.VPFeature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(2, 6, 23, 0.10);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+/* Doc typography */
+.vp-doc h1, .vp-doc h2, .vp-doc h3 {
+  letter-spacing: -0.01em;
+}
+
+.vp-doc p, .vp-doc li {
+  line-height: 1.8;
+}
+
+/* Better math scrolling on small screens */
+.vp-doc mjx-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding-bottom: 2px;
+}
+
+/* Tables */
+.vp-doc table {
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+/* Dark mode tweaks */
+.dark:root {
+  --vp-c-brand-1: #60a5fa;
+  --vp-c-brand-2: #3b82f6;
+  --vp-c-brand-3: #2563eb;
+}
+
+.dark .VPApp {
+  background:
+    radial-gradient(1000px 600px at 10% 0%, rgba(96, 165, 250, 0.12), transparent 55%),
+    radial-gradient(900px 550px at 90% 10%, rgba(52, 211, 153, 0.10), transparent 50%),
+    linear-gradient(to bottom, rgba(2, 6, 23, 0.62), rgba(2, 6, 23, 0.95));
+}
