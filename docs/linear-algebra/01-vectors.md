@@ -3,6 +3,7 @@ title: 向量与内积
 date: 2025-12-17
 ---
 
+
 # 向量与内积
 
 > 目标：用最少的公理，搭出可以做计算与推导的「向量语言」。
@@ -20,6 +21,9 @@ $\ell_2$ 是“欧氏距离”，$\ell_1$ 更像“走格子路”，$\ell_\inft
 :::
 
 ## 2. 内积与夹角
+<div class="bg-red-500 text-white text-4xl p-10 text-center rounded-xl shadow-lg hover:bg-blue-500 transition-colors">
+  Tailwind 测试
+</div>
 
 标准内积：
 
