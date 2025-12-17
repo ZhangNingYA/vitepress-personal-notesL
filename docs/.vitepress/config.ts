@@ -8,7 +8,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: '个人笔记',
   description: '线性代数 / 计算机图形学 / 日更博客',
-  base :'/my-notes/',
+  base :'/vitepress-personal-notesL/',
 
   cleanUrls: true,
   lastUpdated: true,
