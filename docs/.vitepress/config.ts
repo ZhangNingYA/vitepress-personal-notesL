@@ -15,6 +15,7 @@ export default defineConfig({
 
   markdown: {
     // 数学公式：需要安装 markdown-it-mathjax3
+      // html: true,
     math: true,
     lineNumbers: false
   },

@@ -4,7 +4,7 @@ import { ref } from 'vue'
 type SpaceKey = 'row' | 'null' | 'col' | 'leftnull'
 
 interface SpaceInfo {
-  title: string
+  title: string // 这里存 LaTeX 字符串
   desc: string
   perp: SpaceKey
   type: 'n' | 'm'
@@ -12,29 +12,29 @@ interface SpaceInfo {
 
 const activeSpace = ref<SpaceKey>('row')
 
-// ⚠️ 注意：这里把 LaTeX 改成了 HTML 字符串
+// ✅ 数据改回标准的 LaTeX 格式
 const spaces: Record<SpaceKey, SpaceInfo> = {
   row: { 
-    title: 'Row Space C(A<sup>T</sup>)', 
+    title: '\\text{Row Space } C(A^T)', 
     desc: 'A 的行向量张成的空间', 
     perp: 'null', 
     type: 'n' 
   },
   null: { 
-    title: 'Null Space N(A)', 
+    title: '\\text{Null Space } N(A)', 
     desc: 'Ax = 0 的解空间', 
     perp: 'row', 
     type: 'n' 
   },
   col: { 
-    title: 'Column Space C(A)', 
+    title: '\\text{Column Space } C(A)', 
     desc: 'A 的列向量张成的空间', 
     perp: 'leftnull', 
     type: 'm' 
   },
   leftnull: { 
-    title: 'Left Null N(A<sup>T</sup>)', 
-    desc: 'A<sup>T</sup>y = 0 的解空间', 
+    title: '\\text{Left Null } N(A^T)', 
+    desc: 'A^T y = 0 的解空间', 
     perp: 'col', 
     type: 'm' 
   }
@@ -53,14 +53,18 @@ const getStatusClass = (key: SpaceKey) => {
   <div class="subspace-container">
     <div class="domains-grid">
       <div class="domain-box">
-        <div class="domain-label">ℝ<sup>n</sup> (输入空间)</div>
+        <div class="domain-label">
+          <MathFormula formula="\mathbb{R}^n" /> (输入空间)
+        </div>
         
         <div 
           class="space-card row"
           :class="getStatusClass('row')"
           @click="select('row')"
         >
-          <div class="card-header" v-html="spaces.row.title"></div>
+          <div class="card-header">
+            <MathFormula :formula="spaces.row.title" />
+          </div>
           <div class="tags">
             <span v-if="activeSpace === 'row'" class="tag-eye">👀 选中</span>
             <span v-if="spaces[activeSpace].perp === 'row'" class="tag-perp">⛔ 正交于选中项</span>
@@ -72,7 +76,9 @@ const getStatusClass = (key: SpaceKey) => {
           :class="getStatusClass('null')"
           @click="select('null')"
         >
-          <div class="card-header" v-html="spaces.null.title"></div>
+          <div class="card-header">
+            <MathFormula :formula="spaces.null.title" />
+          </div>
           <div class="tags">
             <span v-if="activeSpace === 'null'" class="tag-eye">👀 选中</span>
             <span v-if="spaces[activeSpace].perp === 'null'" class="tag-perp">⛔ 正交于选中项</span>
@@ -81,14 +87,18 @@ const getStatusClass = (key: SpaceKey) => {
       </div>
 
       <div class="domain-box">
-        <div class="domain-label">ℝ<sup>m</sup> (输出空间)</div>
+        <div class="domain-label">
+          <MathFormula formula="\mathbb{R}^m" /> (输出空间)
+        </div>
         
         <div 
           class="space-card col"
           :class="getStatusClass('col')"
           @click="select('col')"
         >
-          <div class="card-header" v-html="spaces.col.title"></div>
+          <div class="card-header">
+            <MathFormula :formula="spaces.col.title" />
+          </div>
           <div class="tags">
             <span v-if="activeSpace === 'col'" class="tag-eye">👀 选中</span>
             <span v-if="spaces[activeSpace].perp === 'col'" class="tag-perp">⛔ 正交于选中项</span>
@@ -100,7 +110,9 @@ const getStatusClass = (key: SpaceKey) => {
           :class="getStatusClass('leftnull')"
           @click="select('leftnull')"
         >
-          <div class="card-header" v-html="spaces.leftnull.title"></div>
+          <div class="card-header">
+            <MathFormula :formula="spaces.leftnull.title" />
+          </div>
           <div class="tags">
             <span v-if="activeSpace === 'leftnull'" class="tag-eye">👀 选中</span>
             <span v-if="spaces[activeSpace].perp === 'leftnull'" class="tag-perp">⛔ 正交于选中项</span>
@@ -112,12 +124,16 @@ const getStatusClass = (key: SpaceKey) => {
     <div class="info-box">
       <h4 class="info-title">💡 核心关系解析</h4>
       <p class="info-text">
-        当你在左侧 ℝ<sup>n</sup> 中，
-        <span class="highlight" v-html="spaces[activeSpace].title"></span> 
+        当你在左侧 <MathFormula formula="\mathbb{R}^n" /> 中，
+        <span class="highlight">
+           <MathFormula :formula="spaces[activeSpace].title" />
+        </span> 
         永远垂直于 
-        <span class="highlight" v-html="spaces[spaces[activeSpace].perp].title"></span>。
+        <span class="highlight">
+           <MathFormula :formula="spaces[spaces[activeSpace].perp].title" />
+        </span>。
         <br>
-        它们的维度之和为 <i>r</i> + (<i>n</i> - <i>r</i>) = <i>n</i>。
+        它们的维度之和为 <MathFormula formula="r + (n-r) = n" />。
         它们互为<b>正交补 (Orthogonal Complements)</b>。
       </p>
     </div>
@@ -125,8 +141,6 @@ const getStatusClass = (key: SpaceKey) => {
 </template>
 
 <style scoped>
-/* 样式保持不变，为了节省篇幅我省略了 style 部分 */
-/* 请保留你原有的 style 代码 */
 .subspace-container { margin: 2rem 0; }
 .domains-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
 @media (max-width: 640px) { .domains-grid { grid-template-columns: 1fr; } }

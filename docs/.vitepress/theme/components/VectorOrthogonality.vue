@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-
+// 1. ✅ 必须显式引入 Math 组件，否则编辑器会以为你在使用 JS 原生的 Math 对象
+import MathFormula from './Math.vue' 
 interface Vector {
   x: number
   y: number
@@ -17,6 +18,10 @@ const isOrthogonal = computed(() => Math.abs(dotProduct.value) < 0.01)
 
 const map = (val: number) => 150 + val * 30
 const mapY = (val: number) => 150 - val * 30
+
+const resultLatex = computed(() => {
+  return `x^T y = (${v1.value.x} \\cdot ${v2.value.x}) + (${v1.value.y} \\cdot ${v2.value.y}) = \\mathbf{${dotProduct.value}}`
+})
 </script>
 
 <template>
@@ -26,13 +31,13 @@ const mapY = (val: number) => 150 - val * 30
     <div class="controls">
       <div class="input-group">
         <span class="label x-label">向量 x:</span>
-        (<input type="number" v-model="v1.x" class="num-input">, 
-         <input type="number" v-model="v1.y" class="num-input">)
+        (<input type="number" v-model.number="v1.x" class="num-input">, 
+         <input type="number" v-model.number="v1.y" class="num-input">)
       </div>
       <div class="input-group">
         <span class="label y-label">向量 y:</span>
-        (<input type="number" v-model="v2.x" class="num-input">, 
-         <input type="number" v-model="v2.y" class="num-input">)
+        (<input type="number" v-model.number="v2.x" class="num-input">, 
+         <input type="number" v-model.number="v2.y" class="num-input">)
       </div>
     </div>
 
@@ -59,9 +64,7 @@ const mapY = (val: number) => 150 - val * 30
 
     <div class="result-box" :class="{ success: isOrthogonal }">
       <div class="math-result">
-        <i>x</i><sup>T</sup><i>y</i> = 
-        ({{v1.x}} · {{v2.x}}) + ({{v1.y}} · {{v2.y}}) = 
-        <strong>{{dotProduct}}</strong>
+        <MathFormula :formula="resultLatex" />
       </div>
       <p class="hint" v-if="!isOrthogonal">试着修改数值，让结果变成 0</p>
     </div>
@@ -69,7 +72,7 @@ const mapY = (val: number) => 150 - val * 30
 </template>
 
 <style scoped>
-/* 样式保持不变，请保留原有的 style */
+/* 样式保持不变 */
 .interactive-card { padding: 1.5rem; border: 1px solid var(--vp-c-divider); border-radius: 8px; background-color: var(--vp-c-bg-soft); margin-bottom: 1rem; }
 .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; text-align: center; }
 .controls { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
