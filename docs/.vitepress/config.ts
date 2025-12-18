@@ -4,6 +4,134 @@ import { getBlogSidebarItems } from './utils/blog'
 const repoName = 'my-notes' // TODO: 改成你的 GitHub 仓库名，例如 'my-notes'
 const base = process.env.NODE_ENV === 'production' ? `/${repoName}/` : '/' // 本地开发使用 '/'，生产构建使用 '/repo/'
 
+// ✅ 新增：用于自动生成侧边栏（不需要额外依赖）
+import { readdirSync, readFileSync, statSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+/** config.ts 所在目录：docs/.vitepress */
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+/** docs 根目录 */
+const DOCS_ROOT = path.resolve(__dirname, '..')
+
+type SidebarItem = { text: string; link: string }
+type SidebarGroup = { text: string; items: SidebarItem[] }
+
+function parseDateMaybe(v: unknown): number | undefined {
+  if (typeof v === 'number' && Number.isFinite(v)) {
+    // 兼容秒级/毫秒级时间戳
+    return v < 1e12 ? v * 1000 : v
+  }
+  if (typeof v === 'string' && v.trim()) {
+    const ms = Date.parse(v.trim())
+    if (Number.isFinite(ms)) return ms
+  }
+  return undefined
+}
+
+function tryReadFrontmatterMeta(filePath: string): { title?: string; order?: number; dateMs?: number } {
+  try {
+    const s = readFileSync(filePath, 'utf-8')
+    const m = s.match(/^---\s*\n([\s\S]*?)\n---\s*\n/)
+    if (!m) return {}
+    const fm = m[1]
+
+    const titleMatch = fm.match(/^\s*title\s*:\s*(.+)\s*$/m)
+    const orderMatch = fm.match(/^\s*order\s*:\s*(.+)\s*$/m)
+
+    // date 优先级：date > updated > lastUpdated
+    const dateMatch = fm.match(/^\s*date\s*:\s*(.+)\s*$/m)
+    const updatedMatch = fm.match(/^\s*updated\s*:\s*(.+)\s*$/m)
+    const lastUpdatedMatch = fm.match(/^\s*lastUpdated\s*:\s*(.+)\s*$/m)
+
+    const title = titleMatch ? titleMatch[1].trim().replace(/^['"]|['"]$/g, '') : undefined
+
+    const orderRaw = orderMatch ? orderMatch[1].trim().replace(/^['"]|['"]$/g, '') : undefined
+    const order = orderRaw != null && orderRaw !== '' && Number.isFinite(Number(orderRaw)) ? Number(orderRaw) : undefined
+
+    const dateRaw =
+      (dateMatch ? dateMatch[1] : undefined) ??
+      (updatedMatch ? updatedMatch[1] : undefined) ??
+      (lastUpdatedMatch ? lastUpdatedMatch[1] : undefined)
+
+    const dateMs = dateRaw ? parseDateMaybe(dateRaw.trim().replace(/^['"]|['"]$/g, '')) : undefined
+
+    return { title, order, dateMs }
+  } catch {
+    return {}
+  }
+}
+
+function titleFromFilename(nameNoExt: string): string {
+  return nameNoExt.replace(/[-_]/g, ' ')
+}
+
+function numberPrefix(nameNoExt: string): number | undefined {
+  const m = nameNoExt.match(/(\d+)/)
+  if (!m) return undefined
+  const n = Number(m[1])
+  return Number.isFinite(n) ? n : undefined
+}
+
+/**
+ * 自动生成某目录的 sidebar items（✅ 默认按时间由新到旧）
+ * @param dirName   docs 下的目录名，例如 'linear-algebra'
+ * @param baseLink  侧边栏链接前缀，例如 '/linear-algebra/'
+ */
+function autoSidebarItems(dirName: string, baseLink: string): SidebarItem[] {
+  const absDir = path.join(DOCS_ROOT, dirName)
+
+  const files = readdirSync(absDir, { withFileTypes: true })
+    .filter(d => d.isFile() && d.name.endsWith('.md'))
+    .map(d => d.name)
+    .filter(name => name.toLowerCase() !== 'index.md') // 排除目录页自身
+
+  const items = files.map((filename) => {
+    const nameNoExt = filename.replace(/\.md$/i, '')
+    const filePath = path.join(absDir, filename)
+    const meta = tryReadFrontmatterMeta(filePath)
+
+    // ✅ 没有 frontmatter.date/updated 的情况下，用文件修改时间兜底
+    const mtimeMs = statSync(filePath).mtimeMs
+    const timeMs = meta.dateMs ?? mtimeMs
+
+    const text = meta.title || titleFromFilename(nameNoExt)
+    const link = `${baseLink}${nameNoExt}`
+
+    return {
+      text,
+      link,
+      __time: timeMs,
+      __order: meta.order,
+      __num: numberPrefix(nameNoExt),
+      __name: nameNoExt
+    } as SidebarItem & { __time: number; __order?: number; __num?: number; __name: string }
+  })
+
+  // ✅ 核心：由新到旧（降序）
+  items.sort((a, b) => {
+    const at = (a as any).__time
+    const bt = (b as any).__time
+    if (at !== bt) return bt - at
+
+    const ao = (a as any).__order
+    const bo = (b as any).__order
+    if (typeof ao === 'number' && typeof bo === 'number') return ao - bo
+    if (typeof ao === 'number') return -1
+    if (typeof bo === 'number') return 1
+
+    const an = (a as any).__num
+    const bn = (b as any).__num
+    if (typeof an === 'number' && typeof bn === 'number') return bn - an // 同时间下数字更大更靠前
+    if (typeof an === 'number') return -1
+    if (typeof bn === 'number') return 1
+
+    return String((a as any).__name).localeCompare(String((b as any).__name), undefined, { numeric: true })
+  })
+
+  return items.map(({ text, link }) => ({ text, link }))
+}
+
 export default defineConfig({
   lang: 'zh-CN',
   title: '个人笔记',
@@ -31,14 +159,14 @@ export default defineConfig({
       { text: '博客', link: '/blog/' }
     ],
 
+    // ✅ 侧边栏：线代/图形学自动读取并按时间倒序；博客保持原逻辑
     sidebar: {
       '/linear-algebra/': [
         {
           text: '线性代数',
           items: [
             { text: '概览', link: '/linear-algebra/' },
-            { text: '向量与内积', link: '/linear-algebra/01-vectors' },
-            { text: '矩阵与线性变换', link: '/linear-algebra/02-matrices' }
+            ...autoSidebarItems('linear-algebra', '/linear-algebra/')
           ]
         }
       ],
@@ -47,7 +175,7 @@ export default defineConfig({
           text: '计算机图形学',
           items: [
             { text: '概览', link: '/computer-graphics/' },
-            { text: '渲染管线与坐标变换', link: '/computer-graphics/01-pipeline' }
+            ...autoSidebarItems('computer-graphics', '/computer-graphics/')
           ]
         }
       ],
