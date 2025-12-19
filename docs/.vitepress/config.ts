@@ -73,6 +73,52 @@ function numberPrefix(nameNoExt: string): number | undefined {
   return Number.isFinite(n) ? n : undefined
 }
 
+/** 确保以 / 开头、以 / 结尾（用于 baseLink，不要把站点 base 拼进去） */
+function normalizeBaseLink(baseLink: string): string {
+  let s = baseLink.trim()
+  if (!s.startsWith('/')) s = `/${s}`
+  if (!s.endsWith('/')) s = `${s}/`
+  return s
+}
+
+/**
+ * 递归收集某目录下全部 Markdown 文件（返回相对路径，使用 POSIX 分隔符 /）
+ */
+function collectMarkdownFiles(absDir: string): string[] {
+  const out: string[] = []
+
+  const shouldIgnoreDir = (name: string) =>
+    name === 'node_modules' || name === '.git' || name === '.vitepress' || name.startsWith('.')
+
+  const walk = (relDirPosix: string) => {
+    const abs = relDirPosix ? path.join(absDir, ...relDirPosix.split('/')) : absDir
+    let entries: ReturnType<typeof readdirSync>
+    try {
+      entries = readdirSync(abs, { withFileTypes: true })
+    } catch {
+      return
+    }
+
+    for (const ent of entries) {
+      if (ent.isDirectory()) {
+        if (shouldIgnoreDir(ent.name)) continue
+        const nextRel = relDirPosix ? `${relDirPosix}/${ent.name}` : ent.name
+        walk(nextRel)
+        continue
+      }
+
+      if (!ent.isFile()) continue
+      if (!/\.md$/i.test(ent.name)) continue // ✅ 兼容 .md / .MD
+
+      const relFile = relDirPosix ? `${relDirPosix}/${ent.name}` : ent.name
+      out.push(relFile)
+    }
+  }
+
+  walk('')
+  return out
+}
+
 /**
  * 自动生成某目录的 sidebar items（✅ 默认按时间由新到旧）
  * @param dirName   docs 下的目录名，例如 'linear-algebra'
@@ -80,31 +126,47 @@ function numberPrefix(nameNoExt: string): number | undefined {
  */
 function autoSidebarItems(dirName: string, baseLink: string): SidebarItem[] {
   const absDir = path.join(DOCS_ROOT, dirName)
+  const baseLinkNorm = normalizeBaseLink(baseLink)
 
-  const files = readdirSync(absDir, { withFileTypes: true })
-    .filter(d => d.isFile() && d.name.endsWith('.md'))
-    .map(d => d.name)
-    .filter(name => name.toLowerCase() !== 'index.md') // 排除目录页自身
+  // ✅ 递归拿到所有 md（保留子目录 index.md，仅排除目录根 index.md）
+  const files = collectMarkdownFiles(absDir).filter(rel => rel.toLowerCase() !== 'index.md')
 
-  const items = files.map((filename) => {
-    const nameNoExt = filename.replace(/\.md$/i, '')
-    const filePath = path.join(absDir, filename)
+  const items = files.map((relPosix) => {
+    const filePath = path.join(absDir, ...relPosix.split('/'))
     const meta = tryReadFrontmatterMeta(filePath)
 
     // ✅ 没有 frontmatter.date/updated 的情况下，用文件修改时间兜底
     const mtimeMs = statSync(filePath).mtimeMs
     const timeMs = meta.dateMs ?? mtimeMs
 
-    const text = meta.title || titleFromFilename(nameNoExt)
-    const link = `${baseLink}${nameNoExt}`
+    const isDirIndex = /\/index\.md$/i.test(relPosix)
+
+    // ✅ 生成路由：子目录 index.md -> /dir/；普通 md -> /dir/file
+    const link = (() => {
+      if (isDirIndex) {
+        const dirRoute = relPosix.replace(/\/index\.md$/i, '/') // 保留尾部 /
+        return encodeURI(path.posix.join(baseLinkNorm, dirRoute))
+      }
+      const routeNoExt = relPosix.replace(/\.md$/i, '')
+      return encodeURI(path.posix.join(baseLinkNorm, routeNoExt))
+    })()
+
+    // ✅ 文本：优先 frontmatter.title；子目录 index 默认用文件夹名；否则用文件名
+    const fileBaseNoExt = path.posix.basename(relPosix).replace(/\.md$/i, '')
+    const folderName = path.posix.basename(path.posix.dirname(relPosix))
+    const text =
+      meta.title ||
+      (isDirIndex ? titleFromFilename(folderName) : titleFromFilename(fileBaseNoExt))
+
+    const num = numberPrefix(isDirIndex ? folderName : fileBaseNoExt)
 
     return {
       text,
       link,
       __time: timeMs,
       __order: meta.order,
-      __num: numberPrefix(nameNoExt),
-      __name: nameNoExt
+      __num: num,
+      __name: relPosix
     } as SidebarItem & { __time: number; __order?: number; __num?: number; __name: string }
   })
 
