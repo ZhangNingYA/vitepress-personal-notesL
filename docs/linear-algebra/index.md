@@ -78,7 +78,7 @@ function idx(n: number) {
   <div class="hero-badge">Linear Algebra</div>
   <div class="hero-title">线性代数目录</div>
   <div class="hero-sub">
-    用于学习与复习的章节索引。支持搜索，点击卡片进入对应笔记（自动补全 base）。
+    用于学习与复习的章节索引。
   </div>
 
   <div class="hero-row">
@@ -90,15 +90,6 @@ function idx(n: number) {
       <div class="stat-k">当前显示</div>
       <div class="stat-v">{{ shown }}</div>
     </div>
-
-<div class="search">
-    <input
-    v-model="q"
-    class="search-input"
-    placeholder="搜索：向量 / 矩阵 / 特征值 / SVD ..."
-    autocomplete="off"
-    />
-</div>
   </div>
 </div>
 
