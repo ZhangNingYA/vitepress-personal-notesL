@@ -29,7 +29,9 @@ export function getBlogSidebarItems(): SidebarItem[] {
 
       return {
         sortKey: date + ' ' + slug,
-        item: { text: `${date} · ${title}`, link: `/blog/${slug}` }
+        // 🟢 新代码：只显示标题
+        item: { text: title, link: `/blog/${slug}` }
+        // item: { text: `${date} · ${title}`, link: `/blog/${slug}` }
       }
     })
     // 倒序：最新在前
