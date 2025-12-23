@@ -2,11 +2,6 @@
 
 蹭GitHub免费的page节点 来个投影公式
 
----
-title: 第15讲：投影
-date: 2025-12-18
-outline: deep
----
 
 # 🔦 投影与子空间
 <div style="color: var(--vp-c-text-2); font-size: 0.9em; margin-bottom: 2rem;">MIT 18.06 Linear Algebra - Lecture 15</div>
@@ -128,5 +123,3 @@ $$P = A(A^T A)^{-1} A^T$$
 1.  当 $Ax=b$ 无解时，我们求解 $A^T A \hat{x} = A^T b$。
 2.  **误差向量** $e$ 永远垂直于 **列空间**。
 3.  投影矩阵 $P$ 就像一个魔法机器，把任何向量“压扁”到子空间里。
-
-下一讲，我们将利用这个强大的工具来解决那个“三点过直线”的实际计算问题（最小二乘法拟合）。
