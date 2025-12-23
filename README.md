@@ -6,11 +6,11 @@
 # 🔦 投影与子空间
 <div style="color: var(--vp-c-text-2); font-size: 0.9em; margin-bottom: 2rem;">MIT 18.06 Linear Algebra - Lecture 15</div>
 
-::: tip 🎯 本讲核心目标
+ 🎯 本讲核心目标
 如果 $Ax=b$ 无解怎么办？
 我们不再寻找完美的解，而是寻找**误差最小**的解。
 这就引出了本课的两大主角：**投影 (Projection)** 和 **投影矩阵 (Projection Matrix)**。
-:::
+
 
 ## 1. 为什么需要投影？
 
@@ -46,10 +46,10 @@ $$a^T (b - \hat{x}a) = 0$$
 展开它：
 $$a^T b - \hat{x} a^T a = 0$$
 
-::: tip 🌟 关键公式 1
+🌟 关键公式 1
 求得投影系数 $\hat{x}$：
 $$\hat{x} = \frac{a^T b}{a^T a}$$
-:::
+
 
 ### 🕹️ 交互实验
 拖动下面的数值，观察绿色投影向量 $p$ 和红色误差向量 $e$。
@@ -70,9 +70,9 @@ $$p = P b$$
 
 其中 $P$ 就是 **投影矩阵**：
 
-::: tip 🌟 关键公式 2
+🌟 关键公式 2
 $$P = \frac{a a^T}{a^T a}$$
-:::
+
 
 ### 3.1 矩阵 $P$ 的性质
 这个矩阵 $P$ 有两个非常有趣的性质，这是投影矩阵的身份证：
@@ -101,9 +101,9 @@ $$A^T (b - A\hat{x}) = 0$$
 
 展开得到线性代数中最著名的方程之一：
 
-::: danger 🔥 正规方程 (Normal Equations)
+ 🔥 正规方程 (Normal Equations)
 $$A^T A \hat{x} = A^T b$$
-:::
+
 
 ### 4.2 求解 $\hat{x}$ 和 $P$
 如果 $A$ 的列是线性无关的，那么 $A^T A$ 是可逆的。我们可以反解出 $\hat{x}$：
