@@ -1,25 +1,26 @@
 # my-notes (VitePress)
 
-个人笔记 / 博客站点，基于 VitePress，适配手机与电脑浏览，支持 LaTeX。
+蹭GitHub免费的page节点 来个投影公式
 
-## 开始使用
 
-```bash
-npm install
-npm run docs:dev
-```
+##  投影矩阵 $P$ (The Projection Matrix)
 
-## 构建与预览
+我们知道 $p = a \hat{x}$。如果我们把上面的 $\hat{x}$ 代入：
 
-```bash
-npm run docs:build
-npm run docs:preview
-```
+$$p = a \frac{a^T b}{a^T a} = \frac{a a^T}{a^T a} b$$
 
-## 部署到 GitHub Pages
+我们可以把系数提取出来，变成矩阵形式：
+$$p = P b$$
 
-1. 将仓库名（repo name）写入 `docs/.vitepress/config.ts` 的 `repoName` / `base`。
-2. 仓库 Settings → Pages → **Build and deployment → Source** 选择 **GitHub Actions**。
-3. 推送到 `main` 分支后自动部署。
+其中 $P$ 就是 **投影矩阵**：
 
-> 访问地址通常是：`https://<username>.github.io/<repo>/`
+::: tip 🌟 关键公式 2
+$$P = \frac{a a^T}{a^T a}$$
+:::
+
+### 矩阵 $P$ 的性质
+这个矩阵 $P$ 有两个非常有趣的性质，这是投影矩阵的身份证：
+
+1.  **对称性 (Symmetric)**: $P^T = P$
+2.  **幂等性 (Idempotent)**: $P^2 = P$
+
