@@ -1,5 +1,5 @@
 ---
-title: MIT Linear Algebra Lecture 15
+title: 第15讲：投影
 date: 2025-12-18
 outline: deep
 ---

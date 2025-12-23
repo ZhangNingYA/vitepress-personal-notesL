@@ -1,9 +1,8 @@
 ---
-title: MIT Linear Algebra Lecture 14
+title: 第14讲：正交与子空间
 date: 2025-12-17
 outline: deep
 ---
-
 
 
 # 📐 正交向量与子空间

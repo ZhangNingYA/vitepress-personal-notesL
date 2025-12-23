@@ -12,27 +12,17 @@ function clean(u: string) {
 }
 
 function titleOf(p: Page) {
-  const fm = p?.frontmatter ?? {}
-  const t = fm.title
-  if (typeof t === 'string' && t.trim()) return t.trim()
-  const url = clean(p?.url || '')
-  const last = url.split('/').filter(Boolean).pop() || url
-  return last.replace(/[-_]/g, ' ')
+  return p.title
 }
 
 function descOf(p: Page) {
-  const fm = p?.frontmatter ?? {}
-  const d = fm.description ?? fm.desc
-  return (typeof d === 'string' && d.trim()) ? d.trim() : ''
+  return p.desc || ''
 }
 
 function tagsOf(p: Page): string[] {
-  const fm = p?.frontmatter ?? {}
-  const t = fm.tags
-  if (Array.isArray(t)) return t.map(String).filter(Boolean)
-  if (typeof t === 'string' && t.trim()) return [t.trim()]
-  return []
+  return Array.isArray(p.tags) ? p.tags : []
 }
+
 
 const pages = computed(() => {
   const arr = Array.isArray(raw) ? raw : []
