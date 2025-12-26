@@ -278,18 +278,19 @@ date: 2025-12-25
 
 **我的答案**
 - **CPU执行时间**（常用定量关系）：
-  \[
+  $$
   T_{CPU}=\text{Instruction Count}\times CPI\times T_{cycle}
          =\frac{\text{Instruction Count}\times CPI}{f_{clock}}
-  \]
+  
+  $$
 - **平均CPI**（按指令类型加权）：
-  \[
+  $$
   CPI_{avg}=\sum_i (CPI_i \cdot \text{freq}_i)
-  \]
+  $$
 - **加速比**（同一工作负载对比）：
-  \[
+  $$
   Speedup=\frac{T_{old}}{T_{new}}
-  \]
+  $$
 
 **分析**
 - 计算题常见陷阱：混淆“主频提升”和“CPI变化”；或未做指令比例加权。
