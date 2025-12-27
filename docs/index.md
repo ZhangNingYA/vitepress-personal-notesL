@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: "个人笔记"
-  text: "线性代数 · 计算机图形学 · 日更博客"
+  name: "复习文档"
+  text: "线性代数 · 计算机图形学 · 博客"
   tagline: "结构清晰、移动端友好、默认支持 LaTeX。"
   actions:
     - theme: brand
