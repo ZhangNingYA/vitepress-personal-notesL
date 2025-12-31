@@ -9,6 +9,7 @@ import SubspaceInteraction from './components/SubspaceInteraction.vue'
 import ProjectionLine from './components/ProjectionLine.vue'
 import LeastSquaresIntro from './components/LeastSquaresIntro.vue'
 import Math from './components/Math.vue'
+import FileCard from './components/file/FileCard.vue'
 
 export default {
   extends: DefaultTheme,
@@ -21,5 +22,6 @@ export default {
     app.component('MathFormula', Math) // <--- 注册全局组件
     app.component('ProjectionLine', ProjectionLine)
     app.component('LeastSquaresIntro', LeastSquaresIntro)
+    app.component('File', FileCard)
   }
 } satisfies Theme
