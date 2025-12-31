@@ -4,34 +4,60 @@ date: 2025-12-31
 ---
 
 
-
 <script setup>
 import { computed } from 'vue'
-import { withBase } from 'vitepress' // 👈 核心：自动处理 /novel/ 路径
+import { withBase } from 'vitepress'
 import { data as rawFiles } from './files.data.ts'
 
-// 定义分类规则
 const categories = [
   { title: '📊 演示文稿 / Slides', exts: ['.pptx', '.ppt', '.key'] },
-  { title: '📝 文档资料 / Docs', exts: ['.docx', '.doc', '.pdf', '.md'] },
+  { title: '📝 文档资料 / Docs', exts: ['.docx', '.doc', '.pdf', '.md', '.txt'] },
   { title: '📦 源码打包 / Assets', exts: ['.zip', '.rar', '.7z'] }
 ]
 
-// 处理数据：分类 + 修正路径
 const groupedFiles = computed(() => {
-  return categories.map(category => {
+  // 1. 创建一个 Set 用来记录“已经被分类的文件 URL”
+  const usedFiles = new Set()
+  
+  // 2. 先处理已定义的分类
+  const result = categories.map(category => {
+    const matchedFiles = rawFiles.filter(file => {
+      const isMatch = category.exts.some(ext => file.url.toLowerCase().endsWith(ext))
+      if (isMatch) {
+        usedFiles.add(file.url) // 标记为已使用
+      }
+      return isMatch
+    }).map(processFile) // 处理路径
+
     return {
       title: category.title,
-      files: rawFiles.filter(file => {
-        return category.exts.some(ext => file.url.toLowerCase().endsWith(ext))
-      }).map(file => ({
-        ...file,
-        // 👇 这一步会自动把 url 变成 /novel/downloads/xxx
-        url: withBase(file.url) 
-      }))
+      files: matchedFiles
     }
   }).filter(group => group.files.length > 0)
+
+  // 3. 处理“剩下的”文件 (兜底逻辑)
+  const otherFiles = rawFiles
+    .filter(file => !usedFiles.has(file.url)) // 筛选出没被标记过的
+    .map(processFile)
+
+  // 4. 如果有剩下的文件，追加一个“其他资源”分组
+  if (otherFiles.length > 0) {
+    result.push({
+      title: '🌈 其他资源 / Others',
+      files: otherFiles
+    })
+  }
+
+  return result
 })
+
+// 辅助函数：统一给文件加上 base 路径
+function processFile(file) {
+  return {
+    ...file,
+    url: withBase(file.url)
+  }
+}
 </script>
 
 # 📥 资源下载中心
@@ -49,7 +75,6 @@ const groupedFiles = computed(() => {
 
 <style scoped>
 .section-group { margin-bottom: 40px; }
-
 .section-title {
   font-size: 18px;
   font-weight: 600;
@@ -58,10 +83,8 @@ const groupedFiles = computed(() => {
   border-bottom: 1px dashed var(--vp-c-divider);
   color: var(--vp-c-text-1);
 }
-
 .card-grid {
   display: grid;
-  /* 响应式网格：最小240px，自动换行 */
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
 }

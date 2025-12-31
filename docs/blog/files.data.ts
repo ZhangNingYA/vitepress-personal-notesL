@@ -1,23 +1,19 @@
-// 位置：docs/files.data.ts (或者和你展示页md文件同级)
+// docs/files.data.ts
 import fs from 'node:fs'
 import path from 'node:path'
 
-// 扫描目录配置
-const dir = './docs/static'
+const dir = 'docs/static'
 
 export default {
   load() {
     const cwd = process.cwd()
     const fullDir = path.resolve(cwd, dir)
 
-    // 安全检查：如果文件夹不存在，返回空数组，防止报错
-    if (!fs.existsSync(fullDir)) {
-      return []
-    }
+    if (!fs.existsSync(fullDir)) return []
 
-    const files = fs.readdirSync(fullDir).filter(file => {
-      return !file.startsWith('.') && /\.(pptx|ppt|docx|doc|pdf|zip|rar|7z)$/i.test(file)
-    })
+    // 1. 修改这里：放宽过滤条件
+    // 只要文件名不以 "." 开头（忽略 .DS_Store 等系统文件），就全部保留
+    const files = fs.readdirSync(fullDir).filter(file => !file.startsWith('.'))
 
     return files.map(file => {
       const filePath = path.join(fullDir, file)
@@ -25,8 +21,7 @@ export default {
       return {
         title: file,
         desc: formatSize(stats.size),
-        // 这里只返回 /downloads/xxx，后面由页面去拼接 base
-        url: `/static/${file}`, 
+        url: `/static/${file}`,
         icon: getIcon(file)
       }
     })
@@ -42,8 +37,12 @@ function formatSize(bytes) {
 }
 
 function getIcon(filename) {
+  // 常用格式给特定图标
   if (/\.(pptx|ppt|key)$/i.test(filename)) return '📊'
-  if (/\.(docx|doc|pdf|md)$/i.test(filename)) return '📝'
-  if (/\.(zip|rar|7z|tar)$/i.test(filename)) return '📦'
+  if (/\.(docx|doc|pdf|md|txt)$/i.test(filename)) return '📝'
+  if (/\.(zip|rar|7z|tar|gz)$/i.test(filename)) return '📦'
+  if (/\.(jpg|png|gif|svg)$/i.test(filename)) return '🖼️' // 新增图片
+  if (/\.(mp4|mov)$/i.test(filename)) return '🎬'         // 新增视频
+  // 兜底图标：未知的全部给回形针
   return '📎'
 }
