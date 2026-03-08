@@ -196,8 +196,8 @@ function autoSidebarItems(dirName: string, baseLink: string): SidebarItem[] {
 
 export default defineConfig({
   lang: 'zh-CN',
-  title: '个人笔记',
-  description: '线性代数 / 计算机图形学 / 日更博客',
+  title: '弗拉夫',
+  description: ' 郭 / extends /  notes',
   base :'/vitepress-personal-notesL/',
 
   cleanUrls: true,
@@ -216,8 +216,8 @@ export default defineConfig({
 
     nav: [
       { text: '首页', link: '/' },
-      { text: '线性代数', link: '/linear-algebra/' },
-      { text: '计算机图形学', link: '/computer-graphics/' },
+      { text: '其他', link: '/linear-algebra/' },
+      { text: 'cg', link: '/computer-graphics/' },
       { text: '博客', link: '/blog/' }
     ],
 
@@ -225,7 +225,7 @@ export default defineConfig({
     sidebar: {
       '/linear-algebra/': [
         {
-          text: '线性代数',
+          text: '其他',
           items: [
             { text: '概览', link: '/linear-algebra/' },
             ...autoSidebarItems('linear-algebra', '/linear-algebra/')
@@ -234,7 +234,7 @@ export default defineConfig({
       ],
       '/computer-graphics/': [
         {
-          text: '计算机图形学',
+          text: 'cg',
           items: [
             { text: '概览', link: '/computer-graphics/' },
             ...autoSidebarItems('computer-graphics', '/computer-graphics/')

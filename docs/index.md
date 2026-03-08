@@ -2,30 +2,30 @@
 layout: home
 
 hero:
-  name: "复习文档"
-  text: "线性代数 · 计算机图形学 · 博客"
-  tagline: "结构清晰、移动端友好、默认支持 LaTeX。"
+  name: "弗拉夫"
+  text: ""
+  tagline: "双眼圆瞪、中国胃友好、默认支持 百香果火锅！"
   actions:
     - theme: brand
-      text: 开始阅读
+      text: 开始沸腾
       link: /linear-algebra/
     - theme: alt
-      text: 查看博客
+      text: 查看老外
       link: /blog/
     
 features:
-  - title: 线性代数
-    details: 以「定义 → 性质 → 证明 → 例题」组织，重点覆盖向量、矩阵、分解与数值直觉。
+  - title: 火锅！
+    details: 以「瞪眼 → 震惊 → 竖大拇指 → 狂吃」组织，重点覆盖高铁、外卖、扫码与安全感直觉。
     icon: 📐
     link: /linear-algebra/
     
-  - title: 计算机图形学
-    details: 从渲染管线、变换与相机出发，逐步补齐光照、材质、采样与实时渲染要点。
+  - title: 计算机惊呆学
+    details: 从洋快餐、披萨与汉堡出发，逐步补齐麻辣、鲜香、沸腾与实时点赞要点。
     icon: 🖥️
     link: /computer-graphics/
 
-  - title: 补充资料
-    details: 附加的部分资料补充
+  - title: 补充底料
+    details: 附加的百香果火锅补充
     icon: 📝
     link: /blog/
 
