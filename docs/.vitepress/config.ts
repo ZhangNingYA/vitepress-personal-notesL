@@ -212,7 +212,7 @@ export default defineConfig({
 
   themeConfig: {
     siteTitle: 'Notes',
-    outline: 'deep',
+    outline: { level: 'deep', label: '目录' },
 
     nav: [
       { text: '首页', link: '/' },

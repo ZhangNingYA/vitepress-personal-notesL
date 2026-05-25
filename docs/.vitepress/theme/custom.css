@@ -72,11 +72,134 @@
   border-radius: 12px;
 }
 
+/* ===== Outline (TOC) beautification ===== */
+
+/* Outline container card */
+.VPDocAsideOutline {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.VPDocAsideOutline:hover {
+  box-shadow: 0 4px 24px rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+/* Outline title */
+.VPDocAsideOutline .outline-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vp-c-brand-1);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+/* Outline links */
+.VPDocAsideOutline .outline-link {
+  position: relative;
+  display: block;
+  padding: 6px 12px;
+  margin: 2px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+  transition: all 180ms ease;
+}
+
+.VPDocAsideOutline .outline-link:hover {
+  color: var(--vp-c-brand-1);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+/* Active link highlight */
+.VPDocAsideOutline .outline-link.active {
+  color: var(--vp-c-brand-1);
+  background: rgba(59, 130, 246, 0.1);
+  font-weight: 600;
+}
+
+/* Left indicator bar for active link */
+.VPDocAsideOutline .outline-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 3px;
+  background: var(--vp-c-brand-1);
+}
+
+/* Outline marker (the native VitePress progress indicator) */
+.VPDocAsideOutline .outline-marker {
+  display: none; /* hide default marker, we use our own active style */
+}
+
+/* Nested items indent */
+.VPDocAsideOutline .outline-link[data-depth="3"],
+.VPDocAsideOutline .outline-link[data-depth="4"],
+.VPDocAsideOutline .outline-link[data-depth="5"] {
+  padding-left: 24px;
+  font-size: 12.5px;
+}
+
+/* Scrollbar styling for long outlines */
+.VPDocAsideOutline .content {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.2) transparent;
+}
+
+.VPDocAsideOutline .content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.VPDocAsideOutline .content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.VPDocAsideOutline .content::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 4px;
+}
+
+.VPDocAsideOutline .content::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.4);
+}
+
 /* Dark mode tweaks */
 .dark:root {
   --vp-c-brand-1: #60a5fa;
   --vp-c-brand-2: #3b82f6;
   --vp-c-brand-3: #2563eb;
+}
+
+.dark .VPDocAsideOutline {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(148, 163, 184, 0.12);
+}
+
+.dark .VPDocAsideOutline:hover {
+  box-shadow: 0 4px 24px rgba(96, 165, 250, 0.08);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.dark .VPDocAsideOutline .outline-link:hover {
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.dark .VPDocAsideOutline .outline-link.active {
+  background: rgba(96, 165, 250, 0.12);
 }
 
 .dark .VPApp {
